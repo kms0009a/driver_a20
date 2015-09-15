@@ -33,7 +33,7 @@
 
 #define MODIO_CLASS      "modio_class"  // To use in udev to create class
 #define NB_MODIO_DEVICES 12             // Number of devices (4 Outputs, 4 Inputs, 4 Optoc)
-#define FIRST_MINOR	     0              // First Minor to use when creating devices with udev
+#define FIRST_MINOR      0              // First Minor to use when creating devices with udev
 
 /* PATH TO FILES IN /DEV/ , USED BY UDEV */
 
@@ -74,6 +74,7 @@ typedef enum _bit_state
 {
     HIGH = 1, // High level +V >> 0
     LOW  = 0  // Low level +v ~~ 0
+    
 }bit_status_t;
 
 
@@ -103,6 +104,7 @@ typedef enum _return_values
     ERR   = 1,
     ACK   = 2,
     NOACK = 3
+    
 }ret_t;
 
 /**
@@ -137,6 +139,7 @@ typedef enum _state_on_off
 {
     ON  = 1,  
     OFF = 0
+    
 }status_t;
 
 /**
@@ -175,6 +178,7 @@ typedef enum _outputs_IDs
     OUTPUT3_ID  = 0x04, // 0100
     OUTPUT4_ID  = 0x08, // 1000
     OUTPUTS_ALL = 0x0F  // 1111
+    
 }output_id_t;
 
  /**
@@ -208,6 +212,7 @@ typedef enum _wait_params_
     MAX_DELAY    = 100, //Maximum time to wait ACK (in microseconds)
     MAX_ATTEMPTS = 5,   //Maximum of retransmissions
     DELAY        = 5    //Time between every send/receive in I2C Communication (in microseconds)
+
 }wait_params_t;
 
 
