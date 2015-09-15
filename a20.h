@@ -17,16 +17,16 @@
 /* Private define ------------------------------------------------------------*/
 
 #define _4K_DIV_BASE_	0x01C20000	
-#define PIO_BASE_ADDR   0x800					// Base addr of PIO	
-#define PIO_END_ADDR 	_4K_DIV_BASE_ + 0x1000	// Size of PIO is 1k octets
-#define PIO_SIZE 		0x1000 					// 4K octets
-#define PBCFG2 			0x2C         			// PBCFG Offset
-#define PBDATA_REG		0x34        			// PBDATA Offset            
+#define PIO_BASE_ADDR   0x800                   // Base addr of PIO	
+#define PIO_END_ADDR 	_4K_DIV_BASE_ + 0x1000  // Size of PIO is 1k octets
+#define PIO_SIZE        0x1000                  // 4K octets
+#define PBCFG2          0x2C                    // PBCFG Offset
+#define PBDATA_REG      0x34                    // PBDATA Offset            
 
 
-#define MOD_IO_ADDRESS_DEFAULT 	0x58   					// Default slave address of the mod_io
-#define MOD_IO_ADDRESS 			MOD_IO_ADDRESS_DEFAULT  // Address to use in communications with MOD_IO
-#define MAX_ANALOG_VALUE 		1023                    // (1111111111) = 3.3 Volts
+#define MOD_IO_ADDRESS_DEFAULT  0x58                    // Default slave address of the mod_io
+#define MOD_IO_ADDRESS          MOD_IO_ADDRESS_DEFAULT  // Address to use in communications with MOD_IO
+#define MAX_ANALOG_VALUE        1023                    // (1111111111) = 3.3 Volts
 
 
 /* DEVICE PART */
@@ -37,20 +37,20 @@
 
 /* PATH TO FILES IN /DEV/ , USED BY UDEV */
 
-#define OUTPUT1_FILE 	"output1"     
-#define OUTPUT2_FILE 	"output2"
-#define OUTPUT3_FILE 	"output3"
-#define OUTPUT4_FILE 	"output4"
+#define OUTPUT1_FILE "output1"     
+#define OUTPUT2_FILE "output2"
+#define OUTPUT3_FILE "output3"
+#define OUTPUT4_FILE "output4"
 
-#define OPTO1_FILE 		"opto1"
-#define OPTO2_FILE		"opto2"
-#define OPTO3_FILE 		"opto3"
-#define OPTO4_FILE 		"opto4"
+#define OPTO1_FILE  "opto1"
+#define OPTO2_FILE  "opto2"
+#define OPTO3_FILE  "opto3"
+#define OPTO4_FILE 	"opto4"
 
-#define ANINPUT1_FILE	"aninput1"
-#define ANINPUT2_FILE 	"aninput2"
-#define ANINPUT3_FILE 	"aninput3"
-#define ANINPUT4_FILE 	"aninput4"
+#define ANINPUT1_FILE  "aninput1"
+#define ANINPUT2_FILE  "aninput2"
+#define ANINPUT3_FILE  "aninput3"
+#define ANINPUT4_FILE  "aninput4"
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -61,8 +61,8 @@
  */ 
 typedef enum _rw_mode
 {
-    READ_MODE   =   1,      // 8th bit of the first octet (wich containts slave address) 
-    WRITE_MODE  =   0       // 8th bit of the first octet (wich containts slave address)
+    READ_MODE  = 1, // 8th bit of the first octet (wich containts slave address) 
+    WRITE_MODE = 0  // 8th bit of the first octet (wich containts slave address)
     
 }rw_mode_t;
 
@@ -72,8 +72,8 @@ typedef enum _rw_mode
  */
 typedef enum _bit_state
 {
-    HIGH    =   1,          // High level +V >> 0
-    LOW     =   0           // Low level +v ~~ 0
+    HIGH = 1, // High level +V >> 0
+    LOW  = 0  // Low level +v ~~ 0
 }bit_status_t;
 
 
@@ -85,10 +85,10 @@ typedef enum _bit_state
  */
 typedef enum _pin_config
 {
-	SDA2_BIT    = 	21, 	// SDA2_BIT shift in data register
-	SCL2_BIT    =	20,		// SCL2_BIT shift in data register
-	SDA2_PIN    =	20,		// SDA2_PIN shift in cfg register
-	SCL2_PIN    =	16		// SDA2_PIN shift in cfg register
+	SDA2_BIT = 21,  // SDA2_BIT shift in data register
+	SCL2_BIT = 20,  // SCL2_BIT shift in data register
+	SDA2_PIN = 20,  // SDA2_PIN shift in cfg register
+	SCL2_PIN = 16   // SDA2_PIN shift in cfg register
 	
 }pin_config_t;
 
@@ -99,10 +99,10 @@ typedef enum _pin_config
 
 typedef enum _return_values
 {
-    OK      =   0,
-    ERR     =   1,
-    ACK     =   2,
-    NOACK   =   3
+    OK    = 0,
+    ERR   = 1,
+    ACK   = 2,
+    NOACK = 3
 }ret_t;
 
 /**
@@ -114,18 +114,18 @@ typedef enum _return_values
 typedef enum _minor_for_devices 
 {
 
-    ANINPUT1_MINOR	= 0,
-	ANINPUT2_MINOR	= 1,
-	ANINPUT3_MINOR 	= 2,
-	ANINPUT4_MINOR 	= 3,
-	OUTPUT1_MINOR	= 4,
-	OUTPUT2_MINOR	= 5,
-	OUTPUT3_MINOR 	= 6,
-	OUTPUT4_MINOR 	= 7,
-	OPTO1_MINOR		= 8,
-	OPTO2_MINOR		= 9,
-	OPTO3_MINOR		= 10,
-	OPTO4_MINOR     = 11
+    ANINPUT1_MINOR = 0,
+	ANINPUT2_MINOR = 1,
+	ANINPUT3_MINOR = 2,
+	ANINPUT4_MINOR = 3,
+	OUTPUT1_MINOR  = 4,
+	OUTPUT2_MINOR  = 5,
+	OUTPUT3_MINOR  = 6,
+	OUTPUT4_MINOR  = 7,
+	OPTO1_MINOR    = 8,
+	OPTO2_MINOR    = 9,
+	OPTO3_MINOR    = 10,
+	OPTO4_MINOR    = 11
 	
 }dev_minor_t;
 
@@ -135,8 +135,8 @@ typedef enum _minor_for_devices
 
 typedef enum _state_on_off
 {
-	ON 		=   1,  
-	OFF 	=   0
+	ON  = 1,  
+	OFF = 0
 }status_t;
 
 /**
@@ -146,15 +146,15 @@ typedef enum _state_on_off
 typedef enum _modio_i2c_addr_a_command
 {
 
-    NO_COMMAND  =	0x00,		// Empty command
-    SET_OUTPUT  =	0x10,		// Command to set relai
-    GET_OPTO    =	0x20, 		// Command to get optocoupler value
-    GET_AIN1	=	0x30,		// Command to get Analog Input 0 value in 10 bits
-    GET_AIN2	=	0x31,		// Command to get Analog Input 1 value in 10 bits
-    GET_AIN3	=	0x32,		// Command to get Analog Input 2 value in 10 bits
-    GET_AIN4	=	0x33,		// Command to get Analog Input 3 value in 10 bits
-    SET_ADDR    =	0xF0, 		// Command to set slave address
-    UNKNOWN		=	0xFFFF		// Unkown command
+    NO_COMMAND = 0x00,   // Empty command
+    SET_OUTPUT = 0x10,   // Command to set relai
+    GET_OPTO   = 0x20,   // Command to get optocoupler value
+    GET_AIN1   = 0x30,   // Command to get Analog Input 0 value in 10 bits
+    GET_AIN2   = 0x31,   // Command to get Analog Input 1 value in 10 bits
+    GET_AIN3   = 0x32,   // Command to get Analog Input 2 value in 10 bits
+    GET_AIN4   = 0x33,   // Command to get Analog Input 3 value in 10 bits
+    SET_ADDR   = 0xF0,   // Command to set slave address
+    UNKNOWN	   = 0xFFFF	 // Unkown command
     
 }command_t;
 
@@ -170,11 +170,11 @@ typedef enum _modio_i2c_addr_a_command
  */
 typedef enum _outputs_IDs
 {
-    OUTPUT1_ID  =   0x01, 		// 0001
-    OUTPUT2_ID  =   0x02, 		// 0010
-    OUTPUT3_ID  =   0x04, 		// 0100
-    OUTPUT4_ID  =   0x08,		// 1000
-    OUTPUTS_ALL =   0x0F		// 1111
+    OUTPUT1_ID  = 0x01, // 0001
+    OUTPUT2_ID  = 0x02, // 0010
+    OUTPUT3_ID  = 0x04, // 0100
+    OUTPUT4_ID  = 0x08, // 1000
+    OUTPUTS_ALL = 0x0F  // 1111
 }output_id_t;
 
  /**
@@ -188,13 +188,13 @@ typedef enum _outputs_IDs
 typedef enum _optocouplers_IDs
 {
     // 00000001 = First Octocoupler [ opto0State = |0|0|0|0|O3|O2|O1|O0| & |0|0|0|0|0|0|0|1| ] = |0|0|0|0|0|0|0|O0|
-    OPTO1_ID   =   0x01, 	
+    OPTO1_ID = 0x01, 	
     // 00000010 = Secnd Octocoupler [ opto1State = |0|0|0|0|O3|O2|O1|O0| & |0|0|0|0|0|0|1|0| ] = |0|0|0|0|0|0|O1|0|]	
-    OPTO2_ID   =   0x02, 		
+    OPTO2_ID = 0x02, 		
     // 00000100 = Secnd Octocoupler [ opto1State = |0|0|0|0|O3|O2|O1|O0| & |0|0|0|0|0|1|0|0| ] = |0|0|0|0|0|O2|0|0|]
-    OPTO3_ID   =   0x04, 		
+    OPTO3_ID = 0x04, 		
     // 00001000 = Secnd Octocoupler [ opto1State = |0|0|0|0|O3|O2|O1|O0| & |0|0|0|0|1|0|0|0| ] = |0|0|0|0|O3|0|0|0|]
-    OPTO4_ID   =   0x08 	
+    OPTO4_ID = 0x08 	
     	
 }opto_id_t;
 
@@ -205,9 +205,9 @@ typedef enum _optocouplers_IDs
  
 typedef enum _wait_params_
 {
-    MAX_DELAY       = 100,  //Maximum time to wait ACK (in microseconds)
-    MAX_ATTEMPTS    = 5,    //Maximum of retransmissions
-    DELAY           = 5     //Time between every send/receive in I2C Communication (in microseconds)
+    MAX_DELAY    = 100, //Maximum time to wait ACK (in microseconds)
+    MAX_ATTEMPTS = 5,   //Maximum of retransmissions
+    DELAY        = 5    //Time between every send/receive in I2C Communication (in microseconds)
 }wait_params_t;
 
 
