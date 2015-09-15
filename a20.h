@@ -31,9 +31,9 @@
 
 /* DEVICE PART */
 
-#define MODIO_CLASS      	"modio_class"   // To use in udev to create class
-#define NB_MODIO_DEVICES 	12              // Number of devices (4 Outputs, 4 Inputs, 4 Optoc)
-#define FIRST_MINOR			0               // First Minor to use when creating devices with udev
+#define MODIO_CLASS      "modio_class"  // To use in udev to create class
+#define NB_MODIO_DEVICES 12             // Number of devices (4 Outputs, 4 Inputs, 4 Optoc)
+#define FIRST_MINOR	     0              // First Minor to use when creating devices with udev
 
 /* PATH TO FILES IN /DEV/ , USED BY UDEV */
 
@@ -45,7 +45,7 @@
 #define OPTO1_FILE  "opto1"
 #define OPTO2_FILE  "opto2"
 #define OPTO3_FILE  "opto3"
-#define OPTO4_FILE 	"opto4"
+#define OPTO4_FILE  "opto4"
 
 #define ANINPUT1_FILE  "aninput1"
 #define ANINPUT2_FILE  "aninput2"
@@ -115,17 +115,17 @@ typedef enum _minor_for_devices
 {
 
     ANINPUT1_MINOR = 0,
-	ANINPUT2_MINOR = 1,
-	ANINPUT3_MINOR = 2,
-	ANINPUT4_MINOR = 3,
-	OUTPUT1_MINOR  = 4,
-	OUTPUT2_MINOR  = 5,
-	OUTPUT3_MINOR  = 6,
-	OUTPUT4_MINOR  = 7,
-	OPTO1_MINOR    = 8,
-	OPTO2_MINOR    = 9,
-	OPTO3_MINOR    = 10,
-	OPTO4_MINOR    = 11
+    ANINPUT2_MINOR = 1,
+    ANINPUT3_MINOR = 2,
+    ANINPUT4_MINOR = 3,
+    OUTPUT1_MINOR  = 4,
+    OUTPUT2_MINOR  = 5,
+    OUTPUT3_MINOR  = 6,
+    OUTPUT4_MINOR  = 7,
+    OPTO1_MINOR    = 8,
+    OPTO2_MINOR    = 9,
+    OPTO3_MINOR    = 10,
+    OPTO4_MINOR    = 11
 	
 }dev_minor_t;
 
@@ -135,8 +135,8 @@ typedef enum _minor_for_devices
 
 typedef enum _state_on_off
 {
-	ON  = 1,  
-	OFF = 0
+    ON  = 1,  
+    OFF = 0
 }status_t;
 
 /**
@@ -154,7 +154,7 @@ typedef enum _modio_i2c_addr_a_command
     GET_AIN3   = 0x32,   // Command to get Analog Input 2 value in 10 bits
     GET_AIN4   = 0x33,   // Command to get Analog Input 3 value in 10 bits
     SET_ADDR   = 0xF0,   // Command to set slave address
-    UNKNOWN	   = 0xFFFF	 // Unkown command
+    UNKNOWN    = 0xFFFF  // Unkown command
     
 }command_t;
 
