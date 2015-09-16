@@ -733,9 +733,9 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
             else
                 analog_strvalue[9 - index] = '0';  
         }
-	    analog_strvalue[10] = '\0';
-	       
-	    printk(KERN_ALERT "[a20_modio]: Analog_str: %s", analog_strvalue);
+        analog_strvalue[10] = '\0';
+	      
+        printk(KERN_ALERT "[a20_modio]: Analog_str: %s", analog_strvalue);
         copy_ret = copy_to_user(out_buffer, analog_strvalue, 11);
            
         return 11; 
