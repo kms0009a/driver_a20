@@ -1,3 +1,15 @@
+/**
+  ******************************************************************************
+  * @file    Olinuxino_A20/I2C/a20.c
+  * @author  KOUMAD Salim, Mraichi Rached, Sabbani Ahmed
+  * @version V0.0.1
+  * @date    25-02-2015
+  * @brief   Driver Code
+  ******************************************************************************
+  */
+
+/* Includes ------------------------------------------------------------------*/
+
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -18,54 +30,48 @@
 #include <linux/delay.h>
 #include "a20.h"
 
-/*********************************/
-/* Declare global variables      */
-/*********************************/
+/* Global Variables ------------------------------------------------------------------*/
 
 static status_t output1, output2, output3, output4;
 
-// Address variables
+// ioremap address
 static void __iomem *addr;
+// Registers addresses
 static uint32_t *cfg, *data;
-
 // Return variable to check if functions executed correctly
 ret_t ret;
-
-// Check return from copy_to_user
+// Check return from copy_to_user function
 int copy_ret;
 
-/******************************************/
-/* Declare device concerns variables      */
-/******************************************/
+/* Declare device concern variables  */
 
+// Minor of the opened device
 static uint8_t curr_minor;
 
+// A trick to fix CAT program acces to driver
 static int lock_cat = 0;
 
+// The state of a specific relay selected by the current_minor
 bit_status_t relay_flag;
 
 // The dev_t for our device 
 dev_t modio_dev;
+
 // The cdev for our device 
 struct cdev *modio_cdev;
+
 // modio_class for udev
 static struct class *modio_class;
 
+// slave MOD-IO address
 static short param_slave_addr = MOD_IO_ADDRESS_DEFAULT;
 
-
-/*********************************/
-/*          Module Param         */
-/*********************************/
-
-module_param(param_slave_addr, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-
-/*********************************/
 /* Declare Temporary variables   */
-/*********************************/
 
+//Optocouplers states
 uint8_t optoStates;
-//variable wich contains last states of outputs (output1, output2, output3, output4)
+
+//variable which contains last states of outputs (output1, output2, output3, output4)
 uint8_t output_old_states,
         output_new_states;
 
@@ -75,24 +81,27 @@ uint32_t cfg_tmp, data_tmp;
 // Command to read value from analog input
 uint8_t analogReadCommand;
 
-// analog 
+// Analog 
 uint16_t analog_value;
+
+// Return the Analog value in string format with copy_to_user fct
 char analog_strvalue[11];
 
-// Return of reading an optocoupler ( '0' or '1' )
+// Return optocoupler state ( '0' or '1' ) with copy_to_user fct
 char opto_str[2];
 
+// Return the output state ( '0' or '1' ) with copy_to_user fct
 char output_str[2];
+
 // Low byte and High byte received from MOD_IO Get Analog Command
 uint8_t l_byte,
         h_byte;
 
-//Calculate wait time
+//Calculate waiting ACK/NOACK response time
 int delay;
 
 //Received data from I2C Bus
 uint8_t received_data;
-
 
 //Name of each device file to create with udev
 char* device_names[12] = {  
@@ -110,17 +119,15 @@ char* device_names[12] = {
                             OPTO4_FILE
                           };
 
+// Variable of for loops
 int index;
 
-/*********************************/
-/* Declare Driver Variables      */
-/*********************************/
+/* Private function -------------------------------------------------------------------------*/
+
+/// Module Param to set slave Addr
+module_param(param_slave_addr, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
 
-
-/*********************************/
-/* Implement Fuction               */
-/*********************************/
 /*
 	Pin Functions Definition
 */
@@ -620,6 +627,7 @@ ret_t init_ioremap()
     return OK;
 }
 
+///Reset addresses
 ret_t reset_p()
 {
 
@@ -675,8 +683,7 @@ struct file_operations fops =
 /* OPEN                                             */
 /****************************************************/
 static int a20_open(struct inode *in, struct file *f) {
-    
-    // (MINOR(modio_dev) + X_MINOR = minor ==> X_MINOR = minor - MINOR(modio_dev) 
+
     curr_minor = iminor(in) - MINOR(modio_dev);
     printk(KERN_ALERT "[a20_modio]: Device [Minor:%d]Opened.", curr_minor);
     lock_cat = 1;
@@ -706,8 +713,10 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
     
     if (lock_cat == 0) 
         return 0;
+        
     // Disable disable access
     lock_cat = 0;
+    
     printk(KERN_ALERT "[a20_modio]: Reading from device.", size);
     copy_ret = 0;
     if ((curr_minor >= ANINPUT1_MINOR) && (curr_minor <= ANINPUT4_MINOR)) {
@@ -744,8 +753,8 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
             printk(KERN_ALERT "[a20_modio]: \t \tRETURN VALUE : %s", opto_str);
             printk(KERN_ALERT "[a20_modio]: \t \tRETURN 1 : %c", opto_str[0]);
             copy_ret = copy_to_user(out_buffer, opto_str, 2);
-            
             return 2;
+            
         case OPTO2_MINOR:
         
             printk(KERN_ALERT "[a20_modio]: Opto 2");
@@ -753,10 +762,9 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
             opto_str[1] = '\0';
             printk(KERN_ALERT "[a20_modio]: \t \tRETURN VALUE : %s", opto_str);
             printk(KERN_ALERT "[a20_modio]: \t \tRETURN 1 : %c", opto_str[0]);
-            
             copy_ret = copy_to_user(out_buffer, opto_str, 2);
-            
             return 2;
+            
         case OPTO3_MINOR:
         
             printk(KERN_ALERT "[a20_modio]: Opto 3");
@@ -765,7 +773,6 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
             printk(KERN_ALERT "[a20_modio]: \t \tRETURN VALUE : %s", opto_str);
             printk(KERN_ALERT "[a20_modio]: \t \tRETURN 1 : %c", opto_str[0]);
             copy_ret = copy_to_user(out_buffer, opto_str, 2);
-            
             return 2;
             
         case OPTO4_MINOR:
@@ -793,7 +800,7 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
             output_str[0] = (output2 == ON) ? '1' : '0'; 
             output_str[1] = '\0';
             copy_ret = copy_to_user(out_buffer, output_str, 2);
-            copy_ret;
+            return 2;
             
         case OUTPUT3_MINOR:
         
@@ -812,6 +819,7 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
             return 2;
             
         default:
+        
             printk(KERN_ALERT "[a20_modio]: This device [Minor:%d], is not allowed to read.", curr_minor);
 
     }
@@ -861,6 +869,7 @@ static ssize_t a20_write(struct file* filp, const char* input_data, size_t size,
 /* IOCTL                                             */
 /****************************************************/
 static int a20_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
+	
     printk(KERN_ALERT "[a20_modio]: Accessing IOCTL.");
     
     return OK;
@@ -868,13 +877,7 @@ static int a20_ioctl (struct file *filp, unsigned int cmd, unsigned long arg) {
 
 
 /**************************************************************************************/
-/* INIT                                             ***********************************/
-/**************************************************************************************/
-/**************************************************************************************/
-/* INIT                                             ***********************************/
-/**************************************************************************************/
-/**************************************************************************************/
-/* INIT                                             ***********************************/
+/* INIT                                                                               */
 /**************************************************************************************/
 static int init_a20_module(void) {
     
@@ -946,7 +949,7 @@ static int init_a20_module(void) {
 
 
 /****************************************************/
-/* CLEANUP                                             */
+/* CLEANUP                                          */
 /****************************************************/
 static int cleanup_a20_module(void) {
     printk(KERN_ALERT "[a20_modio]: Removing Module.");

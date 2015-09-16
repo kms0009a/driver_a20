@@ -1,16 +1,16 @@
 
-#ifndef A20_H_
-#define A20_H_
-
 /**
   ******************************************************************************
   * @file    Olinuxino_A20/I2C/a20.h 
   * @author  KOUMAD Salim, Mraichi Rached, Sabbani Ahmed
   * @version V0.0.1
   * @date    25-02-2015
-  * @brief   Main program body
+  * @brief   Driver Header
   ******************************************************************************
   */
+  
+#ifndef A20_H_
+#define A20_H_
   
 /* Includes ------------------------------------------------------------------*/
 
