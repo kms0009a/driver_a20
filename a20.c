@@ -726,19 +726,19 @@ static ssize_t a20_read(struct file* filp, char* out_buffer, size_t size, loff_t
         analog_value = getAnalog(curr_minor);
         printk(KERN_ALERT "[a20_modio]: Analog_int: 0x%X", analog_value);
         printk(KERN_ALERT "[a20_modio]: Analog_int: %d", analog_value);
-           for (index = 9; index >= 0; index--)
-	       {
-		       if (analog_value & (1 << index) )
-		        analog_strvalue[9 - index] = '1';
-		       else
-		        analog_strvalue[9 - index] = '0';  
-	       }
-	       analog_strvalue[10] = '\0';
+        for (index = 9; index >= 0; index--)
+        {
+            if (analog_value & (1 << index) )
+                analog_strvalue[9 - index] = '1';
+            else
+                analog_strvalue[9 - index] = '0';  
+        }
+	    analog_strvalue[10] = '\0';
 	       
-	       printk(KERN_ALERT "[a20_modio]: Analog_str: %s", analog_strvalue);
-           copy_ret = copy_to_user(out_buffer, analog_strvalue, 11);
+	    printk(KERN_ALERT "[a20_modio]: Analog_str: %s", analog_strvalue);
+        copy_ret = copy_to_user(out_buffer, analog_strvalue, 11);
            
-           return 11; 
+        return 11; 
     } 
     
     switch(curr_minor)
