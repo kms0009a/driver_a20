@@ -18,8 +18,8 @@
 
 #define _4K_DIV_BASE_	0x01C20000	
 #define PIO_BASE_ADDR   0x800                   // Base addr of PIO	
-#define PIO_END_ADDR 	_4K_DIV_BASE_ + 0x1000  // Size of PIO is 1k octets
-#define PIO_SIZE        0x1000                  // 4K octets
+#define PIO_END_ADDR 	_4K_DIV_BASE_ + 0x1000  // Size of PIO is 1k bytes
+#define PIO_SIZE        0x1000                  // 4K bytes
 #define PBCFG2          0x2C                    // PBCFG Offset
 #define PBDATA_REG      0x34                    // PBDATA Offset            
 
@@ -61,8 +61,8 @@
  */ 
 typedef enum _rw_mode
 {
-    READ_MODE  = 1, // 8th bit of the first octet (wich containts slave address) 
-    WRITE_MODE = 0  // 8th bit of the first octet (wich containts slave address)
+    READ_MODE  = 1, // 8th bit of the first byte (wich containts slave address) 
+    WRITE_MODE = 0  // 8th bit of the first byte (wich containts slave address)
     
 }rw_mode_t;
 
@@ -164,7 +164,7 @@ typedef enum _modio_i2c_addr_a_command
 /**
  *  @name output_id_t
  * 	@brief ID of each output (Relay) state.
- *  @details The output (Relay) state is returned by the MOD-IO board in an octet of 8bits
+ *  @details The output (Relay) state is returned by the MOD-IO board in a byte of 8bits
  *           Returned_Value = 0 0 0 0 Output3 Output2 Output1 Output0. 
  * 			 These ID's are used as MASK to get the wanted Output(i) state from the returned 
  * 			 8 bit value. Also to set the value of an Output, a unique value of 8 bits is 
@@ -184,7 +184,7 @@ typedef enum _outputs_IDs
  /**
  *  @name output_id_t
  * 	@brief ID of each optocoupler state.
- *  @details The optocoupler state is returned by the MOD-IO board in an octet of 8bits
+ *  @details The optocoupler state is returned by the MOD-IO board in a byte of 8bits
  *           Returned_Value = 0 0 0 0 Opto3 Opto2 Opto1 Opto0. 
  * 			 These ID's are used as MASK to get the wanted Opto(i) state from the returned 
  * 			 8 bit value.

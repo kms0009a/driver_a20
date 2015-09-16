@@ -140,19 +140,19 @@ void set_scl_input(void) {
 
 void set_scl_output(void) {
     cfg_tmp = ioread32(cfg);
-	iowrite32((cfg_tmp & ~(0x3 << SCL2_PIN)) | (0x1 << SCL2_PIN), cfg);
+    iowrite32((cfg_tmp & ~(0x3 << SCL2_PIN)) | (0x1 << SCL2_PIN), cfg);
 
 }
 
 void set_sda_input(void) {
     cfg_tmp = ioread32(cfg);
-	iowrite32(cfg_tmp & ~(0x3 << SDA2_PIN), cfg);
+    iowrite32(cfg_tmp & ~(0x3 << SDA2_PIN), cfg);
 
 }
 
 void set_sda_output(void) {
     cfg_tmp = ioread32(cfg);
-	iowrite32((cfg_tmp & ~(0x3 << SDA2_PIN)) | (0x1 << SDA2_PIN), cfg);
+    iowrite32((cfg_tmp & ~(0x3 << SDA2_PIN)) | (0x1 << SDA2_PIN), cfg);
 
 }
 
@@ -184,12 +184,12 @@ void set_sda(bit_status_t state) {
 
 bit_status_t get_sda(void) {
     data_tmp = ioread32(data);
-	return ( (data_tmp & (0x1 << SDA2_BIT)) ? HIGH : LOW ) ;
+    return ( (data_tmp & (0x1 << SDA2_BIT)) ? HIGH : LOW ) ;
 }
 
 bit_status_t get_scl(void) {
     data_tmp = ioread32(data);
-	return ( (data_tmp & (0x1 << SCL2_BIT)) ? HIGH : LOW ) ;
+    return ( (data_tmp & (0x1 << SCL2_BIT)) ? HIGH : LOW ) ;
 }
 
 /*
@@ -198,130 +198,130 @@ bit_status_t get_scl(void) {
 
 ret_t i2c_duty(void) {
     udelay(DELAY);
-	return OK;
+    return OK;
 }
 
 ret_t i2c_start(void) {
     printk(KERN_ALERT "[a20_modio]: ==> Send Start.");
     set_sda_output();
-	set_scl_output();
-	set_sda(HIGH);
-	i2c_duty();
-	set_scl(HIGH);
-	i2c_duty();
-	set_sda(LOW);
-	i2c_duty();
-	set_scl(LOW);
-	i2c_duty();
-	printk(KERN_ALERT "[a20_modio]: Start Sent. ==>");
-	return OK;
+    set_scl_output();
+    set_sda(HIGH);
+    i2c_duty();
+    set_scl(HIGH);
+    i2c_duty();
+    set_sda(LOW);
+    i2c_duty();
+    set_scl(LOW);
+    i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: Start Sent. ==>");
+    return OK;
 }
 
 ret_t i2c_wait_ack(void) {
     delay = 0;
     printk(KERN_ALERT "[a20_modio]: Waiting ACK ...");
     set_sda_output();
-	set_sda(HIGH);
-	i2c_duty();
-	set_sda_input();
-	i2c_duty();
-	set_scl(HIGH);
-	i2c_duty();
-	while(get_sda() == HIGH){
-		i2c_duty();
-		delay++;
-		if (delay * 5 > MAX_DELAY)
-		{
-			set_scl(LOW);
-			i2c_duty();
-			printk(KERN_ALERT "[a20_modio]: NOACK Received ...");
-			return NOACK;
-		}
-	}
-	set_scl(LOW);
-	i2c_duty();
+    set_sda(HIGH);
+    i2c_duty();
+    set_sda_input();
+    i2c_duty();
+    set_scl(HIGH);
+    i2c_duty();
+    while(get_sda() == HIGH){
+        i2c_duty();
+        delay++;
+        if (delay * 5 > MAX_DELAY)
+        {
+            set_scl(LOW);
+            i2c_duty();
+            printk(KERN_ALERT "[a20_modio]: NOACK Received ...");
+            return NOACK;
+        }
+    }
+    set_scl(LOW);
+    i2c_duty();
     printk(KERN_ALERT "[a20_modio]: ACK Received ...");
-	return ACK;
+    return ACK;
 }
 
 ret_t i2c_stop(void) {
     printk(KERN_ALERT "[a20_modio]: ==> Send Stop.");
     set_sda_output();
-	set_sda(LOW);
-	i2c_duty();
-	set_scl(HIGH);
-	i2c_duty();
-	set_sda(HIGH);
-	i2c_duty();
-	printk(KERN_ALERT "[a20_modio]: Stop Sent ==>.");
-	return OK;
+    set_sda(LOW);
+    i2c_duty();
+    set_scl(HIGH);
+    i2c_duty();
+    set_sda(HIGH);
+    i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: Stop Sent ==>.");
+    return OK;
 }
 
 uint8_t i2c_read(void) {
     printk(KERN_ALERT "[a20_modio]: Receiving data ...");
     received_data = 0x0;
 	set_sda_input();
-	for (index = 7; index >= 0; index--)
-	{
-		set_scl(HIGH);
-		i2c_duty();
-		received_data |= (get_sda() == HIGH) ?  (1 << index) : 0x0;
-		i2c_duty();
-		set_scl(LOW);
-		i2c_duty();
-	}
-	printk(KERN_ALERT "[a20_modio]: Data received: 0x%X", received_data);
-	return received_data;
+    for (index = 7; index >= 0; index--)
+    {
+        set_scl(HIGH);
+        i2c_duty();
+        received_data |= (get_sda() == HIGH) ?  (1 << index) : 0x0;
+        i2c_duty();
+        set_scl(LOW);
+        i2c_duty();
+    }
+    printk(KERN_ALERT "[a20_modio]: Data received: 0x%X", received_data);
+    return received_data;
 }
 
 ret_t i2c_send(uint8_t byte) {
 
     printk(KERN_ALERT "[a20_modio]: Sending data : 0x%X", byte);
-	set_sda_output();
-	for (index = 7; index >= 0; index--)
-	{
-		if (byte & (HIGH << index)) 
-		{
-			set_sda(HIGH);
-		}
-		else
-		{	
-			set_sda(LOW);
-		}
-		i2c_duty();
-		set_scl(HIGH);
-		i2c_duty();
-		set_scl(LOW);
-		i2c_duty();
-	}
-	printk(KERN_ALERT "[a20_modio]: Data sent .");
-	return OK;
+    set_sda_output();
+    for (index = 7; index >= 0; index--)
+    {
+        if (byte & (HIGH << index)) 
+        {
+            set_sda(HIGH);
+        }
+        else
+        {	
+            set_sda(LOW);
+        }
+        i2c_duty();
+        set_scl(HIGH);
+        i2c_duty();
+        set_scl(LOW);
+        i2c_duty();
+    }
+    printk(KERN_ALERT "[a20_modio]: Data sent .");
+    return OK;
 }
 
 ret_t i2c_send_ack(void) {
 
     set_sda_output();
-	set_sda(LOW);
-	i2c_duty();
-	set_scl(HIGH);
-	i2c_duty();
-	set_scl(LOW);
-	i2c_duty();
+    set_sda(LOW);
+    i2c_duty();
+    set_scl(HIGH);
+    i2c_duty();
+    set_scl(LOW);
+    i2c_duty();
     printk(KERN_ALERT "[a20_modio]: ACK Sent. ");
-	return OK;
+    return OK;
 }
 
 ret_t i2c_send_no_ack(void) {
 
     set_sda_output();
-	set_sda(HIGH);
-	i2c_duty();
-	set_scl(HIGH);
-	i2c_duty();
-	set_scl(LOW);
-	i2c_duty();
+    set_sda(HIGH);
+    i2c_duty();
+    set_scl(HIGH);
+    i2c_duty();
+    set_scl(LOW);
+    i2c_duty();
     printk(KERN_ALERT "[a20_modio]: NOACK Sent. ");
-	return OK;
+    return OK;
 }
 
 ret_t i2c_ping(short addr) {
@@ -331,14 +331,14 @@ ret_t i2c_ping(short addr) {
     i2c_send((addr << 1) | WRITE_MODE);
     i2c_duty();
     if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		printk(KERN_ALERT "i2c_ping return: BUSY");
-		return NOACK;
-	}
-	i2c_stop();
-	i2c_duty();
-	return ACK;
+    {
+        i2c_stop();
+        printk(KERN_ALERT "i2c_ping return: BUSY");
+        return NOACK;
+    }
+    i2c_stop();
+    i2c_duty();
+    return ACK;
 }
 
 /************************************/
@@ -352,62 +352,62 @@ status_t setOutput(uint8_t output, status_t output_on_off)
 {
     output_new_states = output_old_states;
 	
-	printk(KERN_ALERT "[a20_modio]: COMMANDE D'OUVERTURE/FERMETURE DES RELAIS \n");
-	// Construire la commande 
-	output_new_states = (output_on_off == ON) ? output_new_states | output : output_new_states & ~(output);
+    printk(KERN_ALERT "[a20_modio]: OPEN/CLOSE RELAY COMMAND \n");
+    // Build the command 
+    output_new_states = (output_on_off == ON) ? output_new_states | output : output_new_states & ~(output);
 
 	
-	i2c_start();
-	i2c_duty();
-	printk(KERN_ALERT "[a20_modio]: Envoi du premier octet : 0x%X\n", (param_slave_addr << 1) | WRITE_MODE);
-	i2c_send((param_slave_addr << 1) | WRITE_MODE);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return ERR;
-	}
-	i2c_duty();
-	printk(KERN_ALERT "[a20_modio]: Envoi de la commande d'ouverture.");
-	i2c_send(SET_OUTPUT);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return ERR;
-	}
-	i2c_duty();
-	printk(KERN_ALERT "[a20_modio]: Envoi des parametres de la commande : 0x%X\n", output_new_states);
-	i2c_send(output_new_states);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return ERR;
-	}
-	i2c_duty();
-	i2c_stop();
-	i2c_duty();
+    i2c_start();
+    i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: Sending the first Byte : 0x%X\n", (param_slave_addr << 1) | WRITE_MODE);
+    i2c_send((param_slave_addr << 1) | WRITE_MODE);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return ERR;
+    }
+    i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: Sen open command.");
+    i2c_send(SET_OUTPUT);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return ERR;
+    }
+    i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: send command params : 0x%X\n", output_new_states);
+    i2c_send(output_new_states);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return ERR;
+    }
+    i2c_duty();
+    i2c_stop();
+    i2c_duty();
 	
-	//if (output & (1 << 0))
-	output1 = (output_new_states & OUTPUT1_ID) ? ON : OFF;
-	//if(output & (1 << 1))
-	output2 = (output_new_states & OUTPUT2_ID) ? ON : OFF;
-	//if (output & (1 << 2))
-	output3 = (output_new_states & OUTPUT3_ID) ? ON : OFF;
-	//if (output & (1 << 3))
-	output4 = (output_new_states & OUTPUT4_ID) ? ON : OFF;
+    //if (output & (1 << 0))
+    output1 = (output_new_states & OUTPUT1_ID) ? ON : OFF;
+    //if(output & (1 << 1))
+    output2 = (output_new_states & OUTPUT2_ID) ? ON : OFF;
+    //if (output & (1 << 2))
+    output3 = (output_new_states & OUTPUT3_ID) ? ON : OFF;
+    //if (output & (1 << 3))
+    output4 = (output_new_states & OUTPUT4_ID) ? ON : OFF;
 
-	printk(KERN_ALERT "[a20_modio]: Modification de l'état des relais : (%s, %s, %s, %s)\n", 
-								(output1 == ON) ? "ON " : "OFF",
-								(output2 == ON) ? "ON " : "OFF",
-								(output3 == ON) ? "ON " : "OFF",
-								(output4 == ON) ? "ON " : "OFF");
+    printk(KERN_ALERT "[a20_modio]: Setting Output states to : (%s, %s, %s, %s)\n", 
+                     (output1 == ON) ? "ON " : "OFF",
+                     (output2 == ON) ? "ON " : "OFF",
+                     (output3 == ON) ? "ON " : "OFF",
+                     (output4 == ON) ? "ON " : "OFF");
 
-	output_old_states = output_new_states;
-	printk(KERN_ALERT "[a20_modio]: FIN DE L'OPERATION AVEC SUCCES.\n");
+    output_old_states = output_new_states;
+    printk(KERN_ALERT "[a20_modio]: OPERATION ENDED SUCCESFULLY.\n");
 
-	return OK;
+    return OK;
 }
 
 /************************************/
@@ -416,51 +416,52 @@ status_t setOutput(uint8_t output, status_t output_on_off)
 status_t getOptoStates(uint8_t opto_id) {
 
     optoStates = 0xFF;
-	printk(KERN_ALERT "[a20_modio]: Reading optocouplers states\n");
-	// Etape 1 : Envoi de la commande
-	i2c_start();
-	i2c_duty();
-	i2c_send((param_slave_addr << 1) | WRITE_MODE);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return optoStates;
-	}
-	i2c_duty();
-	i2c_send(GET_OPTO);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return optoStates;
-	}
-	i2c_duty();
-	i2c_stop();
-	i2c_duty();
-	i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: Reading optocouplers states\n");
+    
+    // Step 1 : Send the command
+    i2c_start();
+    i2c_duty();
+    i2c_send((param_slave_addr << 1) | WRITE_MODE);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return optoStates;
+    }
+    i2c_duty();
+    i2c_send(GET_OPTO);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return optoStates;
+    }
+    i2c_duty();
+    i2c_stop();
+    i2c_duty();
+    i2c_duty();
 
-	// Etape 2 : Lecture de l'etat des optocoupleurs
-	i2c_start();
-	i2c_duty();
-	i2c_send((param_slave_addr << 1) | READ_MODE);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return optoStates;
-	}
-	i2c_duty();
-	optoStates = i2c_read();
-	i2c_duty();
-	i2c_send_ack();
-	i2c_duty();
-	i2c_stop();
-	i2c_duty();
-	printk(KERN_ALERT "[a20_modio]: optoStates = 0x%X", optoStates);
-	printk(KERN_ALERT "[a20_modio]: optoStates = 0x%X & 0x%X", optoStates, opto_id);
+    // Step 2 : Read opto states 
+    i2c_start();
+    i2c_duty();
+    i2c_send((param_slave_addr << 1) | READ_MODE);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return optoStates;
+    }
+    i2c_duty();
+    optoStates = i2c_read();
+    i2c_duty();
+    i2c_send_ack();
+    i2c_duty();
+    i2c_stop();
+    i2c_duty();
+    printk(KERN_ALERT "[a20_modio]: optoStates = 0x%X", optoStates);
+    printk(KERN_ALERT "[a20_modio]: optoStates = 0x%X & 0x%X", optoStates, opto_id);
 	
-	return((optoStates & opto_id) ? ON : OFF);
+    return((optoStates & opto_id) ? ON : OFF);
 
 }
 
@@ -472,7 +473,7 @@ uint16_t getAnalog(analog_id_t id) {
     
     analog_value = 0x0;
     printk(KERN_ALERT "[a20_modio]: Reading Analog value: \n");
-	if (curr_minor == ANINPUT1_MINOR)
+    if (curr_minor == ANINPUT1_MINOR)
 	{
 		analogReadCommand = 0x30;
 	} else if (curr_minor == ANINPUT2_MINOR)
@@ -485,7 +486,7 @@ uint16_t getAnalog(analog_id_t id) {
 	{
 		analogReadCommand = 0x33;
 	}
-	// Etape 1
+	// Step 1
 	i2c_start();
 	i2c_duty();
 	i2c_send((param_slave_addr << 1) | WRITE_MODE);
@@ -978,7 +979,6 @@ module_exit(cleanup_a20_module);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("RACHED MAIRACHI, AHMED SABBANI , SALIM KOUMAD");
 MODULE_DESCRIPTION("mod_io _ a20 driver");
-MODULE_SUPPORTED_DEVICE("Memory driver");
 
 
 
