@@ -260,7 +260,7 @@ ret_t i2c_stop(void) {
 uint8_t i2c_read(void) {
     printk(KERN_ALERT "[a20_modio]: Receiving data ...");
     received_data = 0x0;
-	set_sda_input();
+    set_sda_input();
     for (index = 7; index >= 0; index--)
     {
         set_scl(HIGH);
@@ -474,77 +474,75 @@ uint16_t getAnalog(analog_id_t id) {
     analog_value = 0x0;
     printk(KERN_ALERT "[a20_modio]: Reading Analog value: \n");
     if (curr_minor == ANINPUT1_MINOR)
-	{
-		analogReadCommand = 0x30;
-	} else if (curr_minor == ANINPUT2_MINOR)
-	{
-		analogReadCommand = 0x31;
-	} else if (curr_minor == ANINPUT3_MINOR)
-	{
-		analogReadCommand = 0x32;
-	} else if (curr_minor == ANINPUT4_MINOR)
-	{
-		analogReadCommand = 0x33;
-	}
-	// Step 1
-	i2c_start();
-	i2c_duty();
-	i2c_send((param_slave_addr << 1) | WRITE_MODE);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return ERR;
-	}
-	i2c_duty();
+    {
+        analogReadCommand = 0x30;
+    } else if (curr_minor == ANINPUT2_MINOR)
+    {
+        analogReadCommand = 0x31;
+    } else if (curr_minor == ANINPUT3_MINOR)
+    {
+        analogReadCommand = 0x32;
+    } else if (curr_minor == ANINPUT4_MINOR)
+    {
+        analogReadCommand = 0x33;
+    }
+    // Step 1
+    i2c_start();
+    i2c_duty();
+    i2c_send((param_slave_addr << 1) | WRITE_MODE);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return ERR;
+    }
+    i2c_duty();
 	
-	i2c_send(analogReadCommand);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return ERR;
-	}
-	i2c_duty();
-	i2c_stop();
-	i2c_duty();
-	i2c_duty();
-	i2c_start();
-	i2c_duty();
-	i2c_send((param_slave_addr << 1) | READ_MODE);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		return ERR;
-	}
-	i2c_duty();
+    i2c_send(analogReadCommand);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        return ERR;
+    }
+    i2c_duty();
+    i2c_stop();
+    i2c_duty();
+    i2c_duty();
+    i2c_start();
+    i2c_duty();
+    i2c_send((param_slave_addr << 1) | READ_MODE);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();  
+        return ERR;
+    }
+    i2c_duty();
 	
-	l_byte = i2c_read();
-	i2c_duty();
-	i2c_send_ack();
-	i2c_duty();
-	h_byte = i2c_read();
-	i2c_duty();
-	i2c_send_ack();
-	i2c_duty();
-	i2c_stop();
-	i2c_duty();
+    l_byte = i2c_read();
+    i2c_duty();
+    i2c_send_ack();
+    i2c_duty();
+    h_byte = i2c_read();
+    i2c_duty();
+    i2c_send_ack();
+    i2c_duty();
+    i2c_stop();
+    i2c_duty();
 	
-	// Construct the analog value from h_byte and l_byte
-	for (index = 0 ; index <= 7; index++)
-	{
-		analog_value |= (l_byte & (1 << index)) ? 1 : 0;
-		analog_value <<= 1;
-	}
-	//Last 2 bits
-	analog_value |= ((h_byte & (1 << 1))? 1 : 0) << 8;
-	analog_value |= ((h_byte & (1 << 0))? 1 : 0) << 9;
-	
+    // Construct the analog value from h_byte and l_byte
+    for (index = 0 ; index <= 7; index++)
+    {
+        analog_value |= (l_byte & (1 << index)) ? 1 : 0;
+        analog_value <<= 1;
+    }
+    //Last 2 bits
+    analog_value |= ((h_byte & (1 << 1))? 1 : 0) << 8;
+    analog_value |= ((h_byte & (1 << 0))? 1 : 0) << 9;
 
-	printk(KERN_ALERT "[a20_modio]: Low_Byte:  0x%X\n", l_byte);
-	printk(KERN_ALERT "[a20_modio]: High_Byte: 0x%X\n", h_byte);
-
+    printk(KERN_ALERT "[a20_modio]: Low_Byte:  0x%X\n", l_byte);
+    printk(KERN_ALERT "[a20_modio]: High_Byte: 0x%X\n", h_byte);
     printk(KERN_ALERT "[a20_modio]: Analog: 0x%X\n", analog_value);
     
     return analog_value;	
@@ -557,40 +555,40 @@ uint16_t getAnalog(analog_id_t id) {
 int set_address(uint8_t addr)
 {
     //start
-	//send 0xb0
-	//send 0xF0
-	//send 0x22
-	//close
-	printk(KERN_ALERT "[a20_modio]: Try changing default address to 0x%X\n", addr);
+    //send 0xb0
+    //send 0xF0
+    //send 0x22
+    //close
+    printk(KERN_ALERT "[a20_modio]: Try changing default address to 0x%X\n", addr);
     i2c_start();
-	i2c_duty();
-	i2c_send((MOD_IO_ADDRESS_DEFAULT << 1) | WRITE_MODE);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		printk(KERN_ALERT "[a20_modio]: Unable to change default address to 0x%X\n", addr);
-		return ERR;
-	}
-	i2c_duty();
-	i2c_send(SET_ADDR);
-	i2c_duty();
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		printk(KERN_ALERT "[a20_modio]: Unable to change default address to 0x%X\n", addr);
-		return ERR;
-	}
-	i2c_duty();
-	i2c_send(addr);
-	if(i2c_wait_ack() == NOACK)
-	{
-		i2c_stop();
-		printk(KERN_ALERT "[a20_modio]: Unable to change default address to 0x%X\n", addr);
-		return ERR;
-	}
-	i2c_duty();
-	i2c_stop();
+    i2c_duty();
+    i2c_send((MOD_IO_ADDRESS_DEFAULT << 1) | WRITE_MODE);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        printk(KERN_ALERT "[a20_modio]: Unable to change default address to 0x%X\n", addr);
+        return ERR;
+    }
+    i2c_duty();
+    i2c_send(SET_ADDR);
+    i2c_duty();
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        printk(KERN_ALERT "[a20_modio]: Unable to change default address to 0x%X\n", addr);
+        return ERR;
+    }
+    i2c_duty();
+    i2c_send(addr);
+    if(i2c_wait_ack() == NOACK)
+    {
+        i2c_stop();
+        printk(KERN_ALERT "[a20_modio]: Unable to change default address to 0x%X\n", addr);
+        return ERR;
+    }
+    i2c_duty();
+    i2c_stop();
 }
 
 /*********************************/
